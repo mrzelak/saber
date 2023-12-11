@@ -2,6 +2,7 @@ from params import *
 from utils import *
 import numpy as np
 from zq import Zq
+from tests import test_b_q, test_b_p
 
 def gen_A(test=False):
     # TODO: change it to secure generation using SHAKE
@@ -38,7 +39,33 @@ def gen_s(test=False, party='alice'):
         s_q = [Zq(n, q, [24, 25, 26, 27]), Zq(n, q, [28, 29, 30, 31])]
         s_q = np.array(s_q)
 
+        pol1 = "1627.0x^0 + 1197.0x^1 + 5617.0x^2 + 3638.0x^3"
+        pol2 = "1929.0x^0 + 7105.0x^1 + 2798.0x^2 + 4984.0x^3"
+        s_q = [Zq(n, q, pol1), Zq(n, q, pol2)]
+        s_q = np.array(s_q)
+        print(s_q)
+
     return s_q
+
+def log_keygen(test, debug, A_q, s_q,
+               h_q, b_q, b_p):
+
+    if not debug: return
+    print("DEBUG KEYGEN ON")
+    print("RANDOM KEYGEN", "OFF" if test else "ON")
+    print("A mod q:\n", A_q)
+    print("s mod q:\n", s_q)
+    print("h mod q:\n", h_q)
+    print("b mod q:\n", b_q)
+    print("b mod p:\n", b_p)
+
+def test_keygen(test, b_q, b_p):
+
+    if not test: return
+
+    test_b_q(b_q)
+    test_b_p(b_p)
+
 
 def gen_keys(test=False, debug=False):
     """
@@ -81,56 +108,21 @@ def gen_keys(test=False, debug=False):
     A_q = gen_A(test=test)
     s_q = gen_s(test=test, party='alice')
     h_q = gen_h()
+
     b_q = A_q.T @ s_q + h_q
+
     shifted_q = vec_right_shift(b_q, eq - ep)
     b_p = vec_mod(shifted_q, p)
-    #f = lambda polynomial: polynomial.right_shift(eq - ep).mod(p)
-    #b_p = list(map(f, b_q))
-    #b_p = np.array(b_p)
     # after the shift b_p is in p, but you have to change mod_q
     # to be consistent
 
-    if debug:
-        print("A:\n", A_q)
-        print("s:\n", s_q)
-        print("h:\n", h_q)
-        print("b:\n", b_q)
-        print("shiftright:\n", b_p)
-
-    if test:
-        vector = [
-                [7476,7980,400,1124],
-                [7124,7948,704,1780] 
-                ]
-        b1 = np.array(vector[0])
-        b2 = np.array(vector[1])
-        poly_b1 = Zq(n, q, b1)
-        poly_b2 = Zq(n, q, b2)
-        correct_q = np.array([poly_b1, poly_b2])
-
-        diff = correct_q - b_q
-        for vect in diff:
-            if vect.polynomial.any():
-                print("KEYGEN: MATMUL FAILED")
-
-        vector = [
-                    [934,997,50,140],
-                    [890,993,88,222]
-                ]
-        b1 = np.array(vector[0])
-        b2 = np.array(vector[1])
-        # note the p instead of q
-        poly_b1 = Zq(n, p, b1)
-        poly_b2 = Zq(n, p, b2)
-        correct_p = np.array([poly_b1, poly_b2])
-
-        diff = correct_p - b_p
-        for vect in diff:
-            if vect.polynomial.any():
-                print("KEYGEN: SHIFTRIGHT FAILED")
-
     public = (A_q, b_p)
     secret = s_q
+
+    log_keygen(test, debug, A_q, s_q,
+               h_q, b_q, b_p)
+
+    test_keygen(test, b_q, b_p)
 
     return public, secret
 

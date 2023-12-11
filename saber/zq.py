@@ -3,6 +3,16 @@ import numpy.polynomial.polynomial as pl
 
 class Zq():
     def __init__(self, exp_n, mod_q, polynomial):
+        if type(polynomial) == str:
+            poly = []
+            coeffs_str = polynomial.split("+")
+            for coeff in coeffs_str:
+                num, _ = coeff.split("x")
+                poly.append(int(float(num)))
+            poly = np.array(poly)
+            polynomial = poly
+            print(polynomial)
+
         self.mod_q = mod_q
         self.exp_n = exp_n
         divisor = np.array([0 for _ in range(exp_n+1)])

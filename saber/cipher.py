@@ -2,11 +2,15 @@ from params import *
 from utils import *
 import numpy as np
 from keygen import gen_keys, gen_s
+from tests import test_b_prim_p, test_cm_t, test_b_prim_q
 
 # TODO: change passing matrix A into passing seed_A
-def gen_message(test=False):
+def gen_message(test=False, debug=False):
+    # here 256 is ok, later we will convert m to polynomial
+    # so it has to have length of the polynomial representation
+    m = np.random.randint(low=0, high=2, size=n)
     if test:
-        #m = np.ones(n)
+        m = np.ones(n)
         #m = np.zeros(n)
         #m = np.array([0, 0, 0, 0])
         #m = np.array([0, 0, 0, 1])
@@ -24,11 +28,39 @@ def gen_message(test=False):
         #m = np.array([1, 1, 0, 1])
         #m = np.array([1, 1, 1, 0])
         #m = np.array([1, 1, 1, 1])
+        if debug:
+            print("RANDOM MESSAGE", "OFF" if test else "ON")
+            print("m:\n", m)
         return m
-    # here 256 is ok, later we will convert m to polynomial
-    # so it has to have length of the polynomial representation
-    m = np.random.randint(low=0, high=2, size=n)
+    if debug:
+        print("RANDOM MESSAGE", "OFF" if test else "ON")
+        print("m:\n", m)
     return m
+
+def log_encrypt(test, debug, s_prim_q,
+                b_prim_q, b_prim_p,
+                s_prim_p, v_prim_p,
+                m_p, cm_t):
+
+    if not debug: return
+    print("CIPHER DEBUG ON")
+    print("RANDOM ENCRYPT", "OFF" if test else "ON")
+    print("s' mod q:\n", s_prim_q)
+    print("b' mod q:\n", b_prim_q)
+    print("b' mod p:\n", b_prim_p)
+    print("s' mod p:\n", s_prim_p)
+    print("v' mod p:\n", v_prim_p)
+    print("m mod p:\n", m_p)
+    print("cm mod t:\n", cm_t)
+
+def test_encrypt(test, b_prim_p, cm_t,
+                 b_prim_q):
+
+    if not test: return
+
+    test_b_prim_p(b_prim_p)
+    test_cm_t(cm_t)
+    test_b_prim_q(b_prim_q)
 
 def encrypt(m, public, test=False, debug=False):
     # TODO: seed_A instead of A
@@ -39,64 +71,27 @@ def encrypt(m, public, test=False, debug=False):
     h_q = gen_h()
     b_prim_q = A_q @ s_prim_q + h_q
 
-    f = lambda polynomial: polynomial.right_shift(eq - ep)
-    b_prim_q = list(map(f, b_prim_q))
-    b_prim_q = np.array(b_prim_q)
-    # now b_prim is in p
+    shifted_q = vec_right_shift(b_prim_q, eq - ep)
+    b_prim_p = vec_mod(shifted_q, p)
 
     s_prim_p = vec_mod(s_prim_q, p)
-    #f = lambda polynomial: polynomial.mod(p)
-    #s_prim_p = list(map(f, s_prim_q))
-    #s_prim_p = np.array(s_prim_p)
+    v_prim_p = b_p.T @ s_prim_p
 
-    #v_prim = np.array([b]) @ s_prim_p
-    v_prim_p = b_p.reshape((2, 1)).T @ s_prim_p
-    v_prim_p = v_prim_p[0]
-    # now v_prim is in p
     m_p = Zq(n, 2, m)
     m_p = m_p.left_shift(ep - 1, p)
-    # i think that m_p is now in p
+
     h1_q = gen_h1()
-    pre_cm_p = v_prim_p - m_p.mod(p) + h1_q.mod(p)
+    pre_cm_p = v_prim_p - m_p + h1_q.mod(p)
     cm_t = pre_cm_p.right_shift(ep - et).mod(t)
-    # now cm is in t
-
-    # this can go earlier to be more consistent
-    b_prim_p = vec_mod(b_prim_q, p)
-    #f = lambda poly: poly.mod(p)
-    #b_prim_p = list(map(f, b_prim_q))
-    #b_prim_p = np.array(b_prim_p)
-    if debug:
-        print("v':")
-        print(v_prim_p)
-        print("s'_q:")
-        print(s_prim_q)
-        print("cm:\n", cm_t)
-        print("b':\n", b_prim_p)
-
-    if test:
-        vector = [
-                [937,992,39,127],
-                [821,984,143,347] 
-                ]
-        b_prim1 = np.array(vector[0])
-        b_prim2 = np.array(vector[1])
-        poly_b_prim1 = Zq(n, p, b_prim1)
-        poly_b_prim2 = Zq(n, p, b_prim2)
-        correct_p = np.array([poly_b_prim1, poly_b_prim2])
-
-        diff = correct_p - b_prim_p
-        for vect in diff:
-            if vect.polynomial.any():
-                print("ENCRYPT: B' FAILED")
-
-        vector = [6,7,7,4] 
-        cm1 = np.array(vector)
-        correct_t = Zq(n, t, cm1)
-
-        diff = correct_t - cm_t
-        if diff.polynomial.any():
-            print("ENCRYPT: CM FAILED")
 
     ciphertext = cm_t, b_prim_p
+
+    test_encrypt(test, b_prim_p, cm_t,
+                 b_prim_q)
+
+    log_encrypt(test, debug, s_prim_q,
+                b_prim_q, b_prim_p,
+                s_prim_p, v_prim_p,
+                m_p, cm_t)
+
     return ciphertext
