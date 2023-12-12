@@ -67,11 +67,12 @@ def encrypt(m, public, test=False, debug=False):
     # TODO: A = gen_A(seed_A)
 
     seed_A, A_q, b_p = public
-    A_ql = gen_A(seed_A)
-    print(A_q-A_ql)
+    A_ql = gen_A(seed_A, random=test)
+    #print(A_q-A_ql)
 
-    seed_s_prim = randombytes(seedbytes, deterministic_test=test, genfor="s'")
-    s_prim_q = gen_s(seed_s_prim, deterministic_test=test, party='bob')
+    seed_s_prim = randombytes(seedbytes, random_seed=test, genfor="s'")
+    #s_prim_q = gen_s(seed_s_prim, deterministic_test=test, party='bob')
+    s_prim_q = gen_s(seed_s_prim, random=test, party='bob')
     h_q = gen_h()
     b_prim_q = A_q @ s_prim_q + h_q
 

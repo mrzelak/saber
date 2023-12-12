@@ -5,16 +5,8 @@ from zq import Zq
 from tests import test_b_q, test_b_p
 import Crypto.Hash.SHAKE128
 
-def gen_A(seed_A, deterministic_test=False, debug=False):
-    if deterministic_test == 'uniform':
-        A_q = np.array([
-                Zq(n, q, np.random.randint(low=0, high=q, size=n))
-                for _ in range(l * l)
-        ])
-        A_q = A_q.reshape((l, l))
-        return A_q
-
-    if deterministic_test:
+def gen_A(seed_A, random=False, debug=False):
+    if not random:
         A_q = [
                 [Zq(n, q, [ 1,  2,  3,  4]), Zq(n, q, [ 5,  6,  7,  8])],
                 [Zq(n, q, [ 9, 10, 11, 12]), Zq(n, q, [13, 14, 15, 16])],
@@ -27,20 +19,13 @@ def gen_A(seed_A, deterministic_test=False, debug=False):
     # moze sie wysypac, dzielisz przez niekoniecznie podzielna liczbe
     bit_len = l * l * n * eq
     byte_len = int(bit_len / 8)
-    #buf_len = int(l * l * n * eq / 8)
-    #bit_len = buf_len * 8
-    #buf_hex = shake.read(buf_len).hex()
     buf_hex = shake.read(byte_len).hex()
     if debug: print(buf_hex)
     num = int(buf_hex, 16)
     rev_bin = "".join(list(reversed(bin(num))))
     rev_bin = rev_bin[:-2]
-    if debug: print("before padding:", len(rev_bin))
-    #padding = "0" * (bit_len - len(rev_buf_bin))
     padding = "0" * (bit_len - num.bit_length())
     rev_bin = rev_bin + padding
-    if debug: print("after padding:", len(rev_bin))
-    #A_q = [[None for _ in range(l)] for _ in range(l)]
     A_q = []
     k = 0
     for _ in range(l):
@@ -60,17 +45,45 @@ def gen_A(seed_A, deterministic_test=False, debug=False):
     if debug: print(A_q)
     return A_q
 
+# 
+    A_q = np.array([
+            Zq(n, q, np.random.randint(low=0, high=q, size=n))
+            for _ in range(l * l)
+    ])
+    A_q = A_q.reshape((l, l))
+    return A_q
+
 
 def hamming_weight(chunk):
     return sum(map(lambda bit: int(bit), chunk))
 
-def gen_s(seed_s, deterministic_test=False, debug=False, party='alice'):
+#def gen_s(seed_s, deterministic_test=False, debug=False, party='alice'):
+def gen_s(seed_s, random=False, debug=False, party='alice'):
     # TODO: generate using random seed
-    if not deterministic_test:
+    #if not deterministic_test:
+    #if random:
+    if False:
         s_q = np.array([
             Zq(n, q, np.random.randint(low=0, high=q, size=n))
             for _ in range(l)
             ])
+        return s_q
+
+    if not random:
+        if party == 'alice':
+            s_q = [Zq(n, q, [17, 18, 19, 20]), Zq(n, q, [21, 22, 23, 24])]
+            s_q = np.array(s_q)
+
+        elif party == 'bob':
+            s_q = [Zq(n, q, [24, 25, 26, 27]), Zq(n, q, [28, 29, 30, 31])]
+            s_q = np.array(s_q)
+
+            pol1 = "1627.0x^0 + 1197.0x^1 + 5617.0x^2 + 3638.0x^3"
+            pol2 = "1929.0x^0 + 7105.0x^1 + 2798.0x^2 + 4984.0x^3"
+            s_q = [Zq(n, q, pol1), Zq(n, q, pol2)]
+            s_q = np.array(s_q)
+            #print(s_q)
+
         return s_q
 
     buf_len = int(l * n * mu / 8)
@@ -103,31 +116,15 @@ def gen_s(seed_s, deterministic_test=False, debug=False, party='alice'):
 
     return s_q
 
-    if party == 'alice':
-        s_q = [Zq(n, q, [17, 18, 19, 20]), Zq(n, q, [21, 22, 23, 24])]
-        s_q = np.array(s_q)
-
-    elif party == 'bob':
-        s_q = [Zq(n, q, [24, 25, 26, 27]), Zq(n, q, [28, 29, 30, 31])]
-        s_q = np.array(s_q)
-
-        pol1 = "1627.0x^0 + 1197.0x^1 + 5617.0x^2 + 3638.0x^3"
-        pol2 = "1929.0x^0 + 7105.0x^1 + 2798.0x^2 + 4984.0x^3"
-        s_q = [Zq(n, q, pol1), Zq(n, q, pol2)]
-        s_q = np.array(s_q)
-        #print(s_q)
-
-    return s_q
 
 def log_keygen(test, debug, A_q, s_q,
-               h_q, b_q, b_p):
+               b_q, b_p):
 
     if not debug: return
     print("DEBUG KEYGEN ON")
     print("RANDOM KEYGEN", "OFF" if test else "ON")
     print("A mod q:\n", A_q)
     print("s mod q:\n", s_q)
-    print("h mod q:\n", h_q)
     print("b mod q:\n", b_q)
     print("b mod p:\n", b_p)
 
@@ -139,30 +136,34 @@ def test_keygen(test, b_q, b_p):
     test_b_p(b_p)
 
 
-def randombytes(length, deterministic_test=False, genfor=False):
-    seed = np.random.default_rng().bytes(length)
-    if deterministic_test:
-        if genfor == "A":
-            seed = b'1'
-        elif genfor == "s":
-            seed = b'2'
-        elif genfor == "s'":
-            seed = b'3'
+def randombytes(length, random_seed=False, genfor=False):
+    if random_seed:
+        seed = np.random.default_rng().bytes(length)
+        return seed
+    if genfor == "A":
+        seed = b'1'
+    elif genfor == "s":
+        seed = b'2'
+    elif genfor == "s'":
+        seed = b'3'
     return seed
 
-def gen_keys(random_A=False, random_seed_A=False, random_s=False, random_seed_s=False, test=False, debug=False):
-    if test:
-        random_seed_A = True
-        random_seed_s = True
-        random_A = True
-        random_s = True
-    seed_A = randombytes(seedbytes, deterministic_test=random_seed_A, genfor='A')
+def gen_keys(deterministic_keys=False, debug=False):
+
+    random_A, random_seed_A, random_s, random_seed_s = deterministic_keys
+
+    seed_A = randombytes(seedbytes, random_seed=random_seed_A, genfor='A')
     shake = Crypto.Hash.SHAKE128.new(seed_A)
     seed_A = shake.read(seedbytes)
-    seed_s = randombytes(noise_seedbytes, deterministic_test=random_seed_s, genfor='s')
+    seed_s = randombytes(noise_seedbytes, random_seed=random_seed_s, genfor='s')
 
-    A_q = gen_A(seed_A, deterministic_test=random_A)
-    s_q = gen_s(seed_s, deterministic_test=random_s, party='alice')
+    skip_seed_A = not random_A
+    skip_seed_s = not random_s
+#   A_q = gen_A(seed_A, random=random_A)
+#   s_q = gen_s(seed_s, random=random_s, party='alice')
+
+    A_q = gen_A(seed_A, random=random_A)
+    s_q = gen_s(seed_s, random=random_s, party='alice')
     h_q = gen_h()
 
     b_q = A_q.T @ s_q + h_q
@@ -173,10 +174,10 @@ def gen_keys(random_A=False, random_seed_A=False, random_s=False, random_seed_s=
     public = (seed_A, A_q, b_p)
     secret = s_q
 
-    log_keygen(test, debug, A_q, s_q,
-               h_q, b_q, b_p)
+    log_keygen(deterministic_test, debug, A_q, s_q,
+               b_q, b_p)
 
-    test_keygen(test, b_q, b_p)
+    test_keygen(deterministic_test, b_q, b_p)
 
     return public, secret
 

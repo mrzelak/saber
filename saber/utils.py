@@ -25,14 +25,14 @@ def gen_h():
     h = np.array([gen_h1() for _ in range(l)])
     return h
 
-def vec_mod(vecpol, new_q):
-    f = lambda polynomial: polynomial.mod(new_q)
-    new_vecpol = list(map(f, vecpol))
-    new_vecpol = np.array(new_vecpol)
-    return new_vecpol
-
-def vec_right_shift(vecpol, shift):
-    f = lambda polynomial: polynomial.right_shift(shift)
-    new_vecpol = list(map(f, vecpol))
-    new_vecpol = np.array(new_vecpol)
-    return new_vecpol
+#def vec_mod(vecpol, new_q):
+#    f = lambda polynomial: polynomial.mod(new_q)
+#    new_vecpol = list(map(f, vecpol))
+#    new_vecpol = np.array(new_vecpol)
+#    return new_vecpol
+#
+#def vec_right_shift(vecpol, shift):
+#    f = lambda polynomial: polynomial.right_shift(shift)
+#    new_vecpol = list(map(f, vecpol))
+#    new_vecpol = np.array(new_vecpol)
+#    return new_vecpol

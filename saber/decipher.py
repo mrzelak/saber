@@ -28,7 +28,6 @@ def decrypt(ciphertext, secret, debug=False):
 
     pre_m_prim_p = v_p - cm_p + h2_q % p
     m_prim_2 = (pre_m_prim_p >> (ep - 1)) % 2
-    # now m_prim_2 should be in R2
 
     log_decrypt(debug, cm_p, s_p, v_p,
                 pre_m_prim_p, m_prim_2)
