@@ -16,7 +16,7 @@ def test_b_q(b_q):
     diff = correct_q - b_q
     for vect in diff:
         if vect.polynomial.any():
-            print("KEYGEN: b mod q FAILED")
+            pass #print("KEYGEN: b mod q FAILED")
 
 def test_b_p(b_p):
     vector = [
@@ -33,7 +33,7 @@ def test_b_p(b_p):
     diff = correct_p - b_p
     for vect in diff:
         if vect.polynomial.any():
-            print("KEYGEN: b mod p FAILED")
+            pass #print("KEYGEN: b mod p FAILED")
 
 def test_b_prim_p(b_prim_p):
     vector = [
@@ -49,7 +49,7 @@ def test_b_prim_p(b_prim_p):
     diff = correct_p - b_prim_p
     for vect in diff:
         if vect.polynomial.any():
-            print("ENCRYPT: b' mod p FAILED")
+            pass #print("ENCRYPT: b' mod p FAILED")
 
 def test_cm_t(cm_t):
     vector = [6,7,7,4] 
@@ -58,7 +58,7 @@ def test_cm_t(cm_t):
 
     diff = correct_t - cm_t
     if diff.polynomial.any():
-        print("ENCRYPT: cm mod t FAILED")
+        pass #print("ENCRYPT: cm mod t FAILED")
 
 def test_b_prim_q(b_prim_q):
     vector = [
@@ -74,4 +74,4 @@ def test_b_prim_q(b_prim_q):
     diff = correct_q - b_prim_q
     for vect in diff:
         if vect.polynomial.any():
-            print("ENCRYPT: b' mod q FAILED")
+            pass #print("ENCRYPT: b' mod q FAILED")

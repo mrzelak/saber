@@ -18,17 +18,17 @@ def benchmark(no, deterministic_keys,
         if is_equal(message, plaintext):
             counter += 1
 
-    print("passed:", counter, "/", no)
+    print("passed:", counter / no * 100)
 
 def main():
     no = 1
     deterministic_keys = True
-    deterministic_msg = True
+    deterministic_msg = False
     deterministic_crypt = True
-    debug_keys = True
-    debug_msg = True
-    debug_encrypt = True
-    debug_decrypt = True
+    debug_keys = False
+    debug_msg = False
+    debug_encrypt = False
+    debug_decrypt = False
     benchmark(no=no,
               deterministic_keys=deterministic_keys,
               deterministic_msg=deterministic_msg,

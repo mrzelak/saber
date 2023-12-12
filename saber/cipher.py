@@ -1,7 +1,7 @@
 from params import *
 from utils import *
 import numpy as np
-from keygen import gen_keys, gen_s
+from keygen import gen_keys, gen_s, randombytes, gen_A
 from tests import test_b_prim_p, test_cm_t, test_b_prim_q
 
 # TODO: change passing matrix A into passing seed_A
@@ -66,23 +66,27 @@ def encrypt(m, public, test=False, debug=False):
     # TODO: seed_A instead of A
     # TODO: A = gen_A(seed_A)
 
-    A_q, b_p = public
-    s_prim_q = gen_s(test=test, party='bob')
+    seed_A, A_q, b_p = public
+    A_ql = gen_A(seed_A)
+    print(A_q-A_ql)
+
+    seed_s_prim = randombytes(seedbytes, deterministic_test=test, genfor="s'")
+    s_prim_q = gen_s(seed_s_prim, deterministic_test=test, party='bob')
     h_q = gen_h()
     b_prim_q = A_q @ s_prim_q + h_q
 
-    shifted_q = vec_right_shift(b_prim_q, eq - ep)
-    b_prim_p = vec_mod(shifted_q, p)
+    shifted_q = b_prim_q >> (eq - ep)
+    b_prim_p = shifted_q % p
 
-    s_prim_p = vec_mod(s_prim_q, p)
+    s_prim_p = s_prim_q % p
     v_prim_p = b_p.T @ s_prim_p
 
     m_p = Zq(n, 2, m)
     m_p = m_p.left_shift(ep - 1, p)
 
     h1_q = gen_h1()
-    pre_cm_p = v_prim_p - m_p + h1_q.mod(p)
-    cm_t = pre_cm_p.right_shift(ep - et).mod(t)
+    pre_cm_p = v_prim_p - m_p + h1_q % p
+    cm_t = (pre_cm_p >> ep - et) % t
 
     ciphertext = cm_t, b_prim_p
 

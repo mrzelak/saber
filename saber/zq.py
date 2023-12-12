@@ -34,12 +34,25 @@ class Zq():
     def __sub__(self, other):
         return Zq(self.exp_n, self.mod_q, self.polynomial - other.polynomial)
 
-    def mod(self, new_q):
+    def __mod__(self, new_q):
         return Zq(self.exp_n, new_q, self.polynomial % new_q)
 
-    def right_shift(self, shift):
+    def __rshift__(self, shift):
         #return Zq(self.exp_n, self.mod_q, np.right_shift(self.polynomial.astype(int), shift))
         return Zq(self.exp_n, self.mod_q, self.polynomial.astype(int) >> shift)
+
+    def __lshift__(self, shift, new_q):
+        # bardzo problematyczny shift. Zwiekszasz liczby, wiec zeby ci clipowalo do starego,
+        # zakresu, musisz podac nowy mod_q w ktorym sie znajdzie.
+        #return Zq(self.exp_n, self.mod_q, np.right_shift(self.polynomial.astype(int), shift))
+        return Zq(self.exp_n, new_q, self.polynomial.astype(int) << shift)
+
+    #def mod(self, new_q):
+    #    return Zq(self.exp_n, new_q, self.polynomial % new_q)
+
+    #def right_shift(self, shift):
+    #    #return Zq(self.exp_n, self.mod_q, np.right_shift(self.polynomial.astype(int), shift))
+    #    return Zq(self.exp_n, self.mod_q, self.polynomial.astype(int) >> shift)
 
     def left_shift(self, shift, new_q):
         # bardzo problematyczny shift. Zwiekszasz liczby, wiec zeby ci clipowalo do starego,
