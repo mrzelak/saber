@@ -14,6 +14,6 @@ key:
 	@python keygen.py
 
 ed:
-	@vim -p main.py decipher.py cipher.py keygen.py utils.py tests.py params.py zq.py
+	@vim -t tags -p main.py decipher.py cipher.py keygen.py utils.py tests.py params.py zq.py
 
 .PHONY: test ed log

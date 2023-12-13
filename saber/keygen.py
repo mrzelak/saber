@@ -16,7 +16,6 @@ def gen_A(seed_A, random=False, debug=False):
         return A_q
 
     shake = Crypto.Hash.SHAKE128.new(seed_A)
-    # moze sie wysypac, dzielisz przez niekoniecznie podzielna liczbe
     bit_len = l * l * n * eq
     byte_len = int(bit_len / 8)
     buf_hex = shake.read(byte_len).hex()
@@ -45,7 +44,6 @@ def gen_A(seed_A, random=False, debug=False):
     if debug: print(A_q)
     return A_q
 
-# 
     A_q = np.array([
             Zq(n, q, np.random.randint(low=0, high=q, size=n))
             for _ in range(l * l)
@@ -57,11 +55,7 @@ def gen_A(seed_A, random=False, debug=False):
 def hamming_weight(chunk):
     return sum(map(lambda bit: int(bit), chunk))
 
-#def gen_s(seed_s, deterministic_test=False, debug=False, party='alice'):
 def gen_s(seed_s, random=False, debug=False, party='alice'):
-    # TODO: generate using random seed
-    #if not deterministic_test:
-    #if random:
     if False:
         s_q = np.array([
             Zq(n, q, np.random.randint(low=0, high=q, size=n))
@@ -90,14 +84,11 @@ def gen_s(seed_s, random=False, debug=False, party='alice'):
     bit_len = buf_len * 8
     shake = Crypto.Hash.SHAKE128.new(seed_s)
     buf_hex = shake.read(buf_len).hex()
-    if debug: print(buf_hex)
     buf_bin = bin(int(buf_hex, 16))
     rev_buf_bin = "".join(list(reversed(buf_bin)))
     rev_buf_bin = rev_buf_bin[:-2]
-    if debug: print("before padding:", len(rev_buf_bin))
     padding = "0" * (bit_len - len(rev_buf_bin))
     rev_buf_bin = padding + rev_buf_bin
-    if debug: print("after padding:", len(rev_buf_bin))
     s_q = []
     k = 0
     for _ in range(l):
@@ -117,24 +108,38 @@ def gen_s(seed_s, random=False, debug=False, party='alice'):
     return s_q
 
 
-def log_keygen(test, debug, A_q, s_q,
+def log_keygen(deterministic_keys, log, A_q, s_q,
                b_q, b_p):
 
-    if not debug: return
-    print("DEBUG KEYGEN ON")
-    print("RANDOM KEYGEN", "OFF" if test else "ON")
+    if not log: return
+
+    random_A, random_seed_A, random_s, random_seed_s = deterministic_keys
+
+    print("LOGGING KEYGEN ON")
+    print("RANDOM SEED_A", "ON" if random_seed_A else "OFF")
+    print("RANDOM A"     , "ON" if random_A      else "OFF")
+    print("RANDOM SEED_S", "ON" if random_seed_s else "OFF")
+    print("RANDOM S"     , "ON" if random_s      else "OFF")
     print("A mod q:\n", A_q)
     print("s mod q:\n", s_q)
     print("b mod q:\n", b_q)
     print("b mod p:\n", b_p)
 
-def test_keygen(test, b_q, b_p):
+def test_keygen(deterministic_keys, unit_test, b_q, b_p):
+    # w sumie teraz to funkcje test sa najbardziej bezutyczne
+    # bo testy zostaly napisane dla n=4 i bez SHAKE'a
 
-    if not test: return
+    if not unit_test: return
+
+    random_A, random_seed_A, random_s, random_seed_s = deterministic_keys
+
+    if random_A: return
+    if random_seed_A: return 
+    if random_s: return
+    if random_seed_s: return
 
     test_b_q(b_q)
     test_b_p(b_p)
-
 
 def randombytes(length, random_seed=False, genfor=False):
     if random_seed:
@@ -148,7 +153,7 @@ def randombytes(length, random_seed=False, genfor=False):
         seed = b'3'
     return seed
 
-def gen_keys(deterministic_keys=False, debug=False):
+def gen_keys(deterministic_keys=False, log=False, unit_test=False):
 
     random_A, random_seed_A, random_s, random_seed_s = deterministic_keys
 
@@ -156,11 +161,6 @@ def gen_keys(deterministic_keys=False, debug=False):
     shake = Crypto.Hash.SHAKE128.new(seed_A)
     seed_A = shake.read(seedbytes)
     seed_s = randombytes(noise_seedbytes, random_seed=random_seed_s, genfor='s')
-
-    skip_seed_A = not random_A
-    skip_seed_s = not random_s
-#   A_q = gen_A(seed_A, random=random_A)
-#   s_q = gen_s(seed_s, random=random_s, party='alice')
 
     A_q = gen_A(seed_A, random=random_A)
     s_q = gen_s(seed_s, random=random_s, party='alice')
@@ -174,10 +174,10 @@ def gen_keys(deterministic_keys=False, debug=False):
     public = (seed_A, A_q, b_p)
     secret = s_q
 
-    log_keygen(deterministic_test, debug, A_q, s_q,
-               b_q, b_p)
+    log_keygen(deterministic_keys, log, A_q, s_q, b_q, b_p)
 
-    test_keygen(deterministic_test, b_q, b_p)
+    # allmost useless now
+    test_keygen(deterministic_keys, unit_test, b_q, b_p)
 
     return public, secret
 

@@ -16,7 +16,7 @@ def test_b_q(b_q):
     diff = correct_q - b_q
     for vect in diff:
         if vect.polynomial.any():
-            pass #print("KEYGEN: b mod q FAILED")
+            print("KEYGEN: b mod q FAILED")
 
 def test_b_p(b_p):
     vector = [
