@@ -19,12 +19,12 @@ def decrypt(ciphertext, secret, log=False):
 
     s_q = utils.bs2polvec(secret, eq)
 
-    cm_size = n * et
-    bit_cm = ciphertext[:cm_size]
-    bit_bp = ciphertext[cm_size:]
+    cm_size = n * et // 4
+    hex_cm = ciphertext[:cm_size]
+    hex_bp = ciphertext[cm_size:]
 
-    cm_t = utils.bs2pol(bit_cm, et)
-    bp_p = utils.bs2polvec(bit_bp, ep)
+    cm_t = utils.bs2pol(hex_cm, et)
+    bp_p = utils.bs2polvec(hex_bp, ep)
 
     cm_p = cm_t << (ep - et, p)
     

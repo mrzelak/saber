@@ -8,10 +8,10 @@ n = 256
 
 LightSaber = False
 #LightSaber = True
-#Saber      = False
-Saber      = True
-FireSaber  = False
-#FireSaber  = True
+Saber      = False
+#Saber      = True
+#FireSaber  = False
+FireSaber  = True
 
 if LightSaber:
     l = 2

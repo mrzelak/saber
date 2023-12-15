@@ -39,13 +39,16 @@ def encrypt(m, public, crypt=False, log=False, unit_test=False):
 
     random_seed_sp, random_sp, random_A = crypt
 
-    seed_A, pk = public
-    seed_A = utils.zfill(seedbytes, seed_A)
-    seed_A = bytes.fromhex(seed_A)
-    A_q = keygen.gen_A(seed_A, random=random_A, log=log)
+    seed_size = seedbytes * 2
+    seed_A = public[:seed_size]
+    pk = public[seed_size:]
 
-    seed_sp = keygen.randombytes(seedbytes, random_seed=random_seed_sp, genfor="s'")
-    sp_q = keygen.gen_s(seed_sp, random=random_sp, log=log, party='bob')
+    seed_A = seed_A.zfill(seedbytes * 2)
+    seed_A = bytes.fromhex(seed_A)
+    A_q = keygen.gen_A(seed_A, eq, random=random_A, log=log)
+
+    seed_sp = utils.randombytes(seedbytes, random_seed=random_seed_sp, genfor="s'")
+    sp_q = keygen.gen_s(seed_sp, mu // 2, random=random_sp, log=log, party='bob')
 
     h_q = utils.gen_h()
     bp_q = A_q @ sp_q + h_q
@@ -65,10 +68,10 @@ def encrypt(m, public, crypt=False, log=False, unit_test=False):
     pre_cm_p = vp_p - m_p + h1_q % p
     cm_t = (pre_cm_p >> ep - et) % t
 
-    bit_cm = utils.pol2bs(cm_t, et)
-    bit_bp = utils.polvec2bs(bp_p, ep)
+    hex_cm = utils.pol2bs(cm_t, et)
+    hex_bp = utils.polvec2bs(bp_p, ep)
 
-    ciphertext = bit_cm + bit_bp
+    ciphertext = hex_cm + hex_bp
 
     test_encrypt(unit_test, bp_p, cm_t, bp_q)
 

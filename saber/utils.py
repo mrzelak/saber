@@ -8,7 +8,6 @@ def gen_h1():
     h1_q = Zq(n, q, h1)
     a = eq - ep - 1
     coeff = 2 ** a
-    # coeff == 4
     h1_q = coeff * h1_q
     return h1_q
 
@@ -36,13 +35,22 @@ def is_equal(message, plaintext):
         return False
     return True
 
-def zfill(length, byte_string):
-    padding = "0" * (length * 2 - len(byte_string))
-    byte_string = padding + byte_string
-    return byte_string
-
 def hamming_weight(chunk):
     return sum(map(lambda bit: int(bit), chunk))
+
+def randombytes(length, random_seed=False, genfor=False):
+
+    seed = np.random.default_rng().bytes(length)
+
+    if not random_seed:
+        if genfor == "A":
+            seed = b"1"
+        elif genfor == "s":
+            seed = b"2"
+        elif genfor == "s'":
+            seed = b"3"
+
+    return seed
 
 def gen_message(random=True, log=False):
 
@@ -57,9 +65,15 @@ def gen_message(random=True, log=False):
 
     return m
 
-def bs2pol(bit_string, coeff_size):
+def bs2pol(byte_string, coeff_size, bitstring=False):
     
-    # bitstring is already inverted
+    if not bitstring:
+        bit_string = format(int(byte_string, 16), 'b')
+        bit_string = bit_string.zfill(n * coeff_size)
+    else:
+        bit_string = byte_string
+    
+    # bit_string is already inverted
     bit_string = "".join(list(reversed(bit_string)))
 
     polynomial = []
@@ -75,22 +89,31 @@ def bs2pol(bit_string, coeff_size):
 
     return pol_object
 
-def pol2bs(polynomial, coeff_size):
+def pol2bs(polynomial, coeff_size, bitstring=False):
 
     bit_string = ""
     for coeff in polynomial.polynomial:
-        coeff = int(coeff)
-        binary = format(coeff, 'b')
-        padding = "0" * (coeff_size - len(binary))
-        binary = padding + binary
+        binary = format(int(coeff), 'b')
+        binary = binary.zfill(coeff_size)
         # append binary to the of of bitstring
         bit_string = binary + bit_string
 
-    return bit_string
-        
-def bs2polvec(bit_string, coeff_size):
+    if bitstring: return bit_string
+    byte_string = format(int(bit_string, 2), 'x')
+    hex_len = n * coeff_size // 4
+    byte_string = byte_string.zfill(hex_len)
+    return byte_string
+
+def bs2polvec(byte_string, coeff_size, bitstring=False):
 
     chunk_size = coeff_size * n
+    if not bitstring:
+        vector_size = l * chunk_size
+
+        bit_string = format(int(byte_string, 16), 'b')
+        bit_string = bit_string.zfill(vector_size)
+    else:
+        bit_string = byte_string
 
     # bit_string is inverted
     bit_string = "".join(list(reversed(bit_string)))
@@ -99,18 +122,38 @@ def bs2polvec(bit_string, coeff_size):
     for idx in range(0, l * chunk_size, chunk_size):
         chunk = bit_string[idx:idx+chunk_size]
         chunk = "".join(list(reversed(chunk)))
-        polynomial = bs2pol(chunk, coeff_size)
+        polynomial = bs2pol(chunk, coeff_size, bitstring=True)
         vector.append(polynomial)
 
     vector = np.array(vector)
 
     return vector
 
-def polvec2bs(vector, coeff_size):
+def polvec2bs(vector, coeff_size, bitstring=False):
 
     bit_string = ""
     for polynomial in vector:
-        chunk = pol2bs(polynomial, coeff_size)
+        chunk = pol2bs(polynomial, coeff_size, bitstring=True)
         bit_string = chunk + bit_string
 
-    return bit_string
+    if bitstring: return bit_string
+
+    byte_string = format(int(bit_string, 2), 'x')
+    hex_len = l * n * coeff_size // 4
+    byte_string = byte_string.zfill(hex_len)
+
+    return byte_string
+
+def debug_vector(vector_ref, vector_test):
+    out  = vector_ref - vector_test
+    dot = out.T @ out
+    print("debug:\n", dot.polynomial)
+
+def debug_A(A_ref, A_test):
+    test_vec = [Zq(n, q, np.ones(256)) for _ in range(l)]
+    test_vec = np.array(test_vec)
+    out = (A_ref - A_test) @ test_vec
+    dot = out.T @ out
+    # if anything non zero then the difference is nonzero
+    print(dot.polynomial)
+

@@ -15,30 +15,27 @@ def shake_bits(seed, bit_len, log=False):
 
     # convert hash to binary
     hash_bin = format(hash_hex, 'b')
+    hash_bin = hash_bin.zfill(bit_len)
 
     # in the specification hash is being inverted
     bit_string = "".join(list(reversed(hash_bin)))
-    padding = "0" * (bit_len - hash_hex.bit_length())
-    if hash_hex == 0:
-        bit_string = "0" * bit_len
-
-    # append padding, but hash is inverted
-    bit_string = bit_string + padding
 
     if log: print("hash_string:\n", hash_string)
 
     return bit_string
 
-def gen_A(seed_A, random=False, log=False):
+def gen_A(seed_A, coeff_size, random=False, log=False):
 
-    bit_len = l * l * n * eq
-    size = ep
-    bit_string = shake_bits(seed_A, bit_len, log=log)
+    polynomial_size = n * coeff_size
+    vector_size = l * polynomial_size
+    matrix_size = l * vector_size
+
+    bit_string = shake_bits(seed_A, matrix_size, log=log)
 
     chunks = []
 
-    for idx in range(0, bit_len, size):
-        chunk = bit_string[idx:idx+size]
+    for idx in range(0, matrix_size, coeff_size):
+        chunk = bit_string[idx:idx+coeff_size]
         chunks.append(chunk)
 
     idx = 0
@@ -63,10 +60,12 @@ def gen_A(seed_A, random=False, log=False):
 
     return A_q
 
-def gen_s(seed_s, random=False, log=False, party='alice'):
+def gen_s(seed_s, size, random=False, log=False, party='alice'):
 
-    bit_len = l * n * mu
-    size = mu // 2
+    polynomial_size = n * size
+    vector_size = l * polynomial_size
+    bit_len = 2 * vector_size
+
     bit_string = shake_bits(seed_s, bit_len, log)
 
     chunks = []
@@ -113,32 +112,18 @@ def log_keygen(keys, log, A_q, s_q, b_q, b_p):
     print("b mod q:\n", b_q)
     print("b mod p:\n", b_p)
 
-def randombytes(length, random_seed=False, genfor=False):
-
-    seed = np.random.default_rng().bytes(length)
-
-    if not random_seed:
-        if genfor == "A":
-            seed = b"1"
-        elif genfor == "s":
-            seed = b"2"
-        elif genfor == "s'":
-            seed = b"3"
-
-    return seed
-
 def gen_keys(keys=False, log=False, unit_test=False):
 
     random_A, random_seed_A, random_s, random_seed_s = keys
 
-    seed_A = randombytes(seedbytes, random_seed=random_seed_A, genfor="A")
+    seed_A = utils.randombytes(seedbytes, random_seed=random_seed_A, genfor="A")
     shake = Crypto.Hash.SHAKE128.new(seed_A)
     seed_A = shake.read(seedbytes)
 
-    seed_s = randombytes(noise_seedbytes, random_seed=random_seed_s, genfor="s")
+    seed_s = utils.randombytes(noise_seedbytes, random_seed=random_seed_s, genfor="s")
 
-    A_q = gen_A(seed_A, random=random_A, log=log)
-    s_q = gen_s(seed_s, random=random_s, log=log, party="alice")
+    A_q = gen_A(seed_A, eq, random=random_A, log=log)
+    s_q = gen_s(seed_s, mu // 2, random=random_s, log=log, party="alice")
     h_q = utils.gen_h()
 
     b_q = A_q.T @ s_q + h_q
@@ -147,11 +132,11 @@ def gen_keys(keys=False, log=False, unit_test=False):
     b_p = shifted_q % p
 
     secret = utils.polvec2bs(s_q, eq)
-    pk = utils.polvec2bs(b_p, ep)
 
-    # TODO: public = seed_A + pk
-    seed_A = utils.zfill(seedbytes, seed_A.hex())
-    public = (seed_A, pk)
+    pk = utils.polvec2bs(b_p, ep)
+    seed_A = seed_A.hex().zfill(seedbytes * 2)
+
+    public = seed_A + pk
 
     log_keygen(keys, log, A_q, s_q, b_q, b_p)
 
