@@ -11,7 +11,6 @@ class Zq():
                 poly.append(int(float(num)))
             poly = np.array(poly)
             polynomial = poly
-            print(polynomial)
 
         self.mod_q = mod_q
         self.exp_n = exp_n
@@ -25,10 +24,6 @@ class Zq():
             self.polynomial = np.append(self.polynomial, 0)
     
     def __add__(self, other):
-        # przydaloby sie to przetestowac czy to w ogole jest istotne
-        if self.mod_q != other.mod_q:
-            raise Exception("different q of poly")
-
         return Zq(self.exp_n, self.mod_q, self.polynomial + other.polynomial)
 
     def __sub__(self, other):
@@ -38,26 +33,13 @@ class Zq():
         return Zq(self.exp_n, new_q, self.polynomial % new_q)
 
     def __rshift__(self, shift):
-        #return Zq(self.exp_n, self.mod_q, np.right_shift(self.polynomial.astype(int), shift))
         return Zq(self.exp_n, self.mod_q, self.polynomial.astype(int) >> shift)
 
-    def __lshift__(self, shift, new_q):
-        # bardzo problematyczny shift. Zwiekszasz liczby, wiec zeby ci clipowalo do starego,
-        # zakresu, musisz podac nowy mod_q w ktorym sie znajdzie.
-        #return Zq(self.exp_n, self.mod_q, np.right_shift(self.polynomial.astype(int), shift))
-        return Zq(self.exp_n, new_q, self.polynomial.astype(int) << shift)
-
-    #def mod(self, new_q):
-    #    return Zq(self.exp_n, new_q, self.polynomial % new_q)
-
-    #def right_shift(self, shift):
-    #    #return Zq(self.exp_n, self.mod_q, np.right_shift(self.polynomial.astype(int), shift))
-    #    return Zq(self.exp_n, self.mod_q, self.polynomial.astype(int) >> shift)
-
-    def left_shift(self, shift, new_q):
-        # bardzo problematyczny shift. Zwiekszasz liczby, wiec zeby ci clipowalo do starego,
-        # zakresu, musisz podac nowy mod_q w ktorym sie znajdzie.
-        #return Zq(self.exp_n, self.mod_q, np.right_shift(self.polynomial.astype(int), shift))
+    def __lshift__(self, arg):
+        # by doing leftshifting you increase value, possibly creating overflow
+        # in previous ring R_q. To prevent this, you must perform leftshift in
+        # in the same moment as widen the domain by changing new_q.
+        shift, new_q = arg
         return Zq(self.exp_n, new_q, self.polynomial.astype(int) << shift)
 
     def __mul__(self, other):

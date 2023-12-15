@@ -26,7 +26,7 @@ def benchmark(no, random_msg, keys, crypt,
 def main():
 
     # general
-    no = 10000
+    no = 1
     unit_test  = False
     random_msg = True
 

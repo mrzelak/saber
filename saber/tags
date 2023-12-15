@@ -11,12 +11,6 @@
 !_TAG_FIELD_DESCRIPTION!Python	nameref	/the original name for the tag/
 !_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
 !_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
-!_TAG_KIND_DESCRIPTION!Make	I,makefile	/makefiles/
-!_TAG_KIND_DESCRIPTION!Make	m,macro	/macros/
-!_TAG_KIND_DESCRIPTION!Make	t,target	/targets/
-!_TAG_KIND_DESCRIPTION!Man	S,subsection	/sub sections/
-!_TAG_KIND_DESCRIPTION!Man	s,section	/sections/
-!_TAG_KIND_DESCRIPTION!Man	t,title	/titles/
 !_TAG_KIND_DESCRIPTION!Python	I,namespace	/name referring a module defined in other file/
 !_TAG_KIND_DESCRIPTION!Python	Y,unknown	/name referring a class\/variable\/function\/module defined in other module/
 !_TAG_KIND_DESCRIPTION!Python	c,class	/classes/
@@ -28,8 +22,6 @@
 !_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
 !_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
 !_TAG_OUTPUT_VERSION	0.0	/current.age/
-!_TAG_PARSER_VERSION!Make	0.0	/current.age/
-!_TAG_PARSER_VERSION!Man	0.0	/current.age/
 !_TAG_PARSER_VERSION!Python	0.0	/current.age/
 !_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
 !_TAG_PROC_CWD	/home/engineerka/postq/sbr/saber/	//
@@ -37,52 +29,65 @@
 !_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
 !_TAG_PROGRAM_URL	https://ctags.io/	/official site/
 !_TAG_PROGRAM_VERSION	6.0.0	//
-!_TAG_ROLE_DESCRIPTION!Make!makefile	included	/included/
-!_TAG_ROLE_DESCRIPTION!Make!makefile	optional	/optionally included/
 !_TAG_ROLE_DESCRIPTION!Python!module	imported	/imported modules/
 !_TAG_ROLE_DESCRIPTION!Python!module	indirectlyImported	/module imported in alternative name/
 !_TAG_ROLE_DESCRIPTION!Python!module	namespace	/namespace from where classes\/variables\/functions are imported/
 !_TAG_ROLE_DESCRIPTION!Python!unknown	imported	/imported from the other module/
 !_TAG_ROLE_DESCRIPTION!Python!unknown	indirectlyImported	/classes\/variables\/functions\/modules imported in alternative name/
+A	debug.2	/^A = [$/;"	v
+Zq	tags	/^Zq	zq.py	\/^class Zq():$\/;"	c$/;"	c
 Zq	zq.py	/^class Zq():$/;"	c
+__add__	tags	/^__add__	zq.py	\/^    def __add__(self, other):$\/;"	m	class:Zq$/;"	f	member:Zq.__init__	file:
 __add__	zq.py	/^    def __add__(self, other):$/;"	m	class:Zq
+__init__	tags	/^__init__	zq.py	\/^    def __init__(self, exp_n, mod_q, polynomial):$\/;"	m	class:Zq$/;"	m	class:Zq
 __init__	zq.py	/^    def __init__(self, exp_n, mod_q, polynomial):$/;"	m	class:Zq
+__lshift__	tags	/^__lshift__	zq.py	\/^    def __lshift__(self, shift, new_q):$\/;"	m	class:Zq$/;"	f	function:Zq.__init__.__add__.__sub__.__mod__.__rshift__	file:
 __lshift__	zq.py	/^    def __lshift__(self, shift, new_q):$/;"	m	class:Zq
+__mod__	tags	/^__mod__	zq.py	\/^    def __mod__(self, new_q):$\/;"	m	class:Zq$/;"	f	function:Zq.__init__.__add__.__sub__	file:
 __mod__	zq.py	/^    def __mod__(self, new_q):$/;"	m	class:Zq
+__mul__	tags	/^__mul__	zq.py	\/^    def __mul__(self, other):$\/;"	m	class:Zq$/;"	f	function:Zq.__init__.__add__.__sub__.__mod__.__rshift__.__lshift__.left_shift	file:
 __mul__	zq.py	/^    def __mul__(self, other):$/;"	m	class:Zq
+__repr__	tags	/^__repr__	zq.py	\/^    def __repr__(self):$\/;"	m	class:Zq$/;"	f	function:Zq.__init__.__add__.__sub__.__mod__.__rshift__.__lshift__.left_shift.__mul__.__rmul__.__str__	file:
 __repr__	zq.py	/^    def __repr__(self):$/;"	m	class:Zq
+__rmul__	tags	/^__rmul__	zq.py	\/^    def __rmul__(self, other):$\/;"	m	class:Zq$/;"	f	function:Zq.__init__.__add__.__sub__.__mod__.__rshift__.__lshift__.left_shift.__mul__	file:
 __rmul__	zq.py	/^    def __rmul__(self, other):$/;"	m	class:Zq
+__rshift__	tags	/^__rshift__	zq.py	\/^    def __rshift__(self, shift):$\/;"	m	class:Zq$/;"	f	function:Zq.__init__.__add__.__sub__.__mod__	file:
 __rshift__	zq.py	/^    def __rshift__(self, shift):$/;"	m	class:Zq
+__str__	tags	/^__str__	zq.py	\/^    def __str__(self):$\/;"	m	class:Zq$/;"	f	function:Zq.__init__.__add__.__sub__.__mod__.__rshift__.__lshift__.left_shift.__mul__.__rmul__	file:
 __str__	zq.py	/^    def __str__(self):$/;"	m	class:Zq
+__sub__	tags	/^__sub__	zq.py	\/^    def __sub__(self, other):$\/;"	m	class:Zq$/;"	f	function:Zq.__init__.__add__	file:
 __sub__	zq.py	/^    def __sub__(self, other):$/;"	m	class:Zq
 benchmark	main.py	/^def benchmark(no, deterministic_keys,$/;"	f
-debug	params.py	/^debug = False$/;"	v
-dec	Makefile	/^dec:$/;"	t
+cm	debug.2	/^cm = cm << 7$/;"	v
+cm	debug.2	/^cm = pre_cm >> 7$/;"	v
 decrypt	decipher.py	/^def decrypt(ciphertext, secret, debug=False):$/;"	f
-ed	Makefile	/^ed:$/;"	t
-enc	Makefile	/^enc:$/;"	t
 encrypt	cipher.py	/^def encrypt(m, public, test=False, debug=False):$/;"	f
 ep	params.py	/^ep = 10$/;"	v
 eq	params.py	/^eq = 13$/;"	v
 et	params.py	/^et = 3$/;"	v
 full_test	params.py	/^full_test = True$/;"	v
-gen_A	keygen.py	/^def gen_A(seed_A, random=False, debug=False):$/;"	f
+gen_A	keygen.py	/^def gen_A(seed_A, random=False, log=False):$/;"	f
+gen_h	tags	/^gen_h	utils.py	\/^def gen_h():$\//;"	f	function:Zq.__init__.__add__.__sub__.__mod__.__rshift__.__lshift__.left_shift.__mul__.__rmul__.__str__.__repr__.gen_h1.gen_h2	file:
 gen_h	utils.py	/^def gen_h():$/;"	f
+gen_h1	tags	/^gen_h1	utils.py	\/^def gen_h1():$\/;"	f$/;"	f	function:Zq.__init__.__add__.__sub__.__mod__.__rshift__.__lshift__.left_shift.__mul__.__rmul__.__str__.__repr__	file:
 gen_h1	utils.py	/^def gen_h1():$/;"	f
+gen_h2	tags	/^gen_h2	utils.py	\/^def gen_h2():$\/;"	f$/;"	f	function:Zq.__init__.__add__.__sub__.__mod__.__rshift__.__lshift__.left_shift.__mul__.__rmul__.__str__.__repr__.gen_h1	file:
 gen_h2	utils.py	/^def gen_h2():$/;"	f
-gen_keys	keygen.py	/^def gen_keys(deterministic_keys=False, debug=False):$/;"	f
+gen_keys	keygen.py	/^def gen_keys(deterministic_keys=False, log=False, unit_test=False):$/;"	f
 gen_message	cipher.py	/^def gen_message(test=False, debug=False):$/;"	f
-gen_s	keygen.py	/^def gen_s(seed_s, random=False, debug=False, party='alice'):$/;"	f
+gen_s	keygen.py	/^def gen_s(seed_s, random=False, log=False, party='alice'):$/;"	f
 hamming_weight	keygen.py	/^def hamming_weight(chunk):$/;"	f
 is_equal	decipher.py	/^def is_equal(message, plaintext):$/;"	f
-key	Makefile	/^key:$/;"	t
 l	params.py	/^l = 2$/;"	v
+left_shift	tags	/^left_shift	zq.py	\/^    def left_shift(self, shift, new_q):$\/;"	m	class:Zq$/;"	f	function:Zq.__init__.__add__.__sub__.__mod__.__rshift__.__lshift__	file:
 left_shift	zq.py	/^    def left_shift(self, shift, new_q):$/;"	m	class:Zq
-log	Makefile	/^log:$/;"	t
 log_decrypt	decipher.py	/^def log_decrypt(debug, cm_p, s_p, v_p,$/;"	f
 log_encrypt	cipher.py	/^def log_encrypt(test, debug, s_prim_q,$/;"	f
-log_keygen	keygen.py	/^def log_keygen(test, debug, A_q, s_q,$/;"	f
+log_keygen	keygen.py	/^def log_keygen(deterministic_keys, log, A_q, s_q,$/;"	f
+m	debug.2	/^m = [ 1 1 0 1 ]$/;"	v
+m	debug.2	/^m = [ 1 1 1 1 ]$/;"	v
 main	main.py	/^def main():$/;"	f
+members	tags	/^!_TAG_KIND_DESCRIPTION!Python	m,member	\/class members\/$/;"	c
 mu	params.py	/^mu = 10$/;"	v
 n	params.py	/^n = 256 if full_test else 4$/;"	v
 noise_seedbytes	params.py	/^noise_seedbytes = 32$/;"	v
@@ -90,10 +95,14 @@ np	cipher.py	/^import numpy as np$/;"	I	nameref:module:numpy
 np	decipher.py	/^import numpy as np$/;"	I	nameref:module:numpy
 np	keygen.py	/^import numpy as np$/;"	I	nameref:module:numpy
 np	pol_test.py	/^import numpy as np$/;"	I	nameref:module:numpy
+np	tags	/^np	pol_test.py	\/^import numpy as np$\/;"	I	nameref:module:numpy$/;"	I	nameref:module:numpy
+np	tags	/^np	utils.py	\/^import numpy as np$\/;"	I	nameref:module:numpy$/;"	I	function:Zq.__init__.__add__.__sub__.__mod__.__rshift__.__lshift__.left_shift.__mul__.__rmul__.__str__.__repr__	file:	nameref:module:numpy
+np	tags	/^np	zq.py	\/^import numpy as np$\/;"	I	nameref:module:numpy$/;"	I	nameref:module:numpy
 np	tests.py	/^import numpy as np$/;"	I	nameref:module:numpy
 np	utils.py	/^import numpy as np$/;"	I	nameref:module:numpy
 np	zq.py	/^import numpy as np$/;"	I	nameref:module:numpy
 p	params.py	/^p = 2 ** ep$/;"	v
+pl	tags	/^pl	zq.py	\/^import numpy.polynomial.polynomial as pl$\/;"	I	nameref:module:numpy.polynomial.poly/;"	I	nameref:module:numpy.polynomial.polynomial
 pl	zq.py	/^import numpy.polynomial.polynomial as pl$/;"	I	nameref:module:numpy.polynomial.polynomial
 pol0	pol_test.py	/^pol0 = Zq(n, q, polynomial_0)$/;"	v
 pol1	pol_test.py	/^pol1 = Zq(n, q, polynomial_1)$/;"	v
@@ -101,15 +110,16 @@ pol2	pol_test.py	/^pol2 = Zq(n, q, polynomial_2)$/;"	v
 polynomial_0	pol_test.py	/^polynomial_0 = np.array([2, 0, 0, 1])$/;"	v
 polynomial_1	pol_test.py	/^polynomial_1 = np.array([2, 0, 0, 0, 1, 1])$/;"	v
 polynomial_2	pol_test.py	/^polynomial_2 = np.array([3, 0, 0, 0, 1, 1])$/;"	v
+pre_cm	debug.2	/^pre_cm = v' - m mod p + h1$/;"	v
 q	params.py	/^q = 2 ** eq$/;"	v
 randombytes	keygen.py	/^def randombytes(length, random_seed=False, genfor=False):$/;"	f
 seedbytes	params.py	/^seedbytes = 32$/;"	v
 t	params.py	/^t = 2 ** et$/;"	v
-test	Makefile	/^test:$/;"	t
 test_b_p	tests.py	/^def test_b_p(b_p):$/;"	f
 test_b_prim_p	tests.py	/^def test_b_prim_p(b_prim_p):$/;"	f
 test_b_prim_q	tests.py	/^def test_b_prim_q(b_prim_q):$/;"	f
 test_b_q	tests.py	/^def test_b_q(b_q):$/;"	f
 test_cm_t	tests.py	/^def test_cm_t(cm_t):$/;"	f
 test_encrypt	cipher.py	/^def test_encrypt(test, b_prim_p, cm_t,$/;"	f
-test_keygen	keygen.py	/^def test_keygen(test, b_q, b_p):$/;"	f
+test_keygen	keygen.py	/^def test_keygen(deterministic_keys, unit_test, b_q, b_p):$/;"	f
+v	debug.2	/^v = 764 + 436 x +  82 x^2 + 882 x^3$/;"	v
